@@ -1,0 +1,37 @@
+1.vue组件化的优势 个人理解
+    1.1 提升开发效率 多人同时开发多个组件 互不干扰 同时组件能够复用 减少开发成本
+    1.2 提升整个项目的可维护性 如果出现bug能够快速定义到某个组件
+2.组件中的传参方式 遵从单向数据流 父 -> 子
+    2.1 props 最常见的传参方式 通过在子组件中定义props属性，接收从父组件中传递过来的参数
+    2.2 $attrs 不太常见的传参方式 对于子组件的props中没有定义 但是从父组件中传递过来的参数 能够通过$attrs获取
+    2.3 $refs 不常用 在父组件中 给子组件设置一个ref属性 父组件能通过这个属性访问到子组件的内容。 假如我们在子组件的data选项中定义了一个叫做a的属性，然后等待子组件加载完毕之后 我们在父组件
+        中能够直接通过ref选项查找到这个 a 属性 并且进行修改
+        2.3.1 父子组件的挂载过程（生命周期）: 父beforecreate -> 父created -> 父beforemounte -> 子beforecreate -> 子created -> 子beforemounte -> 子mounted -> 父mounted
+        2.3.2 父子组件的更新过程： 子组件更新： 父beforeupdate -> 子beforeupdate -> 子updated -> 父updated; 
+              父组件更新：父beforeupdate -> 父updated
+        2.3.3 父子组件的销毁过程： 父beforedestroy -> 子beforedestroy -> 子destroyed -> 父destroyed
+    2.4 $children 不建议使用 在父组件中 我们能通过$children这个数组获取到其所有子组件 但是要注意 $children 数组中子组件的排列是无序的
+3.子组件向父组件传参 使用$emit 派发一个事件 谁派发谁监听 后续再解释
+4.兄弟组件之间的传参 eventbus $on监听 $emit派发
+5.隔代传参 不常用 通过在祖先组件中注册provide函数（和data的写法类似）并提供数据之后 在后代组件中能通过inject（和props写法类似）接收到传递的参数
+6.插槽 slot 
+    6.1 匿名插槽 在组件中设计一个填充区域 接收父组件传递过来的数据 只适用于只有一个插槽的情况
+    6.2 具名插槽 创建一个具有name属性的插槽 在父组件中也需要通过v-slot:name的形式做一下标记 实现对号入座
+    6.3 作用域插槽 有的业务场景我们可能需要在slot中展示子组件内的数据，但是父组件在mounted之前是接收不到子组件的数据的 那么我们就需要用到作用域插槽
+        我们可以在子组件的插槽中随意绑定数据 在父组件的模板中通过slotProps接受数据
+        写法：
+        // 子组件 (匿名插槽)
+        <slot :age="27"></slot>
+        // 父组件
+        <div v-slot:default="slotProps"> // 或者通过结构语法 按照自己的喜好来
+            {{slotProps.age}}
+        </div>
+        ==================================
+        // 子组件 (具名插槽)
+        <slot name="content" :age="27"></slot>
+        // 父组件
+        <div v-slot:content="slotProps">
+            {{slotProps.age}}
+        </div> 
+7.小知识点
+    7.1 inheritAttrs 禁止组件的根元素继承特性
