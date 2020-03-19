@@ -1,0 +1,3 @@
+vue的工作流程
+  1.执行init 初始化方法 做一些准备工作 例如初始化 生命周期 data methods props
+  2.$mount 挂载

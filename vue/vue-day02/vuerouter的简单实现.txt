@@ -1,0 +1,37 @@
+这篇文章主要浅显的分析一下vuerouter的原理 下文简称router
+
+router大概为我们做了这几件事
+  1.注册router-link、router-view组件
+    我们在使用router的时候基本上都需要router-view router-link这两个组件的配合，那么有的同学可能发现了，我在vue中并没有定义过这样的组件啊？！
+    其实是因为router已经帮我们注册好了这两个组件
+    我们在使用router的时候 有一步必须的操作是 Vue.use(router)
+    Vue.use简单来说就做了一件事
+      当传递的参数为一个对象时，那么这个对象就必须带一个install方法 然后将Vue作为传进去并且执行
+      如果这个对象是一个函数的话 就直接执行
+    router插件是一个对象 在他的install方法中通过传递进来的Vue 进行了组件注册 这也是为什么router和Vue是强耦合的原因之一
+  2.通过监听地址栏的变化 选择渲染哪些组件
+    2.1 我们使用router的时候 都会定义一个配置文件 例如
+        routes: [
+          {
+            path: '/',
+            name: 'home',
+            component: home
+          }
+        ]
+        在router内部会通过这个配置文件解析成一个映射表 key为path value为component 类似
+        {
+          '/': home
+        }
+        在router中会定义一个监听事件
+        window.addEventListener('hashchange', fn)
+    2.2 通过hash模式来举例 在hash发生变化的时候 会触发router的监听事件 类似于
+        在监听事件的内部 router会递归遍历刚才生成的映射表 去进行匹配
+        这里有一个问题 我们的url或者说哈希值发生变化的时候 为什么这个数据是响应式的
+        在router内部是这么实现的
+        this.app = new Vue({
+          data: {
+            current: '/'
+          }
+        })
+        那么 this.app.current就是响应式的数据 当url发生变化的时候 我们就去修改这条数据 那么所有用到这条数据的地方都会修改
+        
