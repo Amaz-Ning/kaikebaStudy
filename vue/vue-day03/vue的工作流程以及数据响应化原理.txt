@@ -1,0 +1,10 @@
+1.vue的工作流程
+  1.1 __init() => 初始化数据 data methods 生命周期
+  1.2 $mounte() => 开始进行渲染
+    1.2.1 compile 编译 将我们传入的模板以及数据 编译成render函数
+    1.2.2 产出虚拟dom redner函数执行的结果是产出虚拟dom
+          1.2.2.1 在render执行过程中会触发依赖收集
+                  每一个组件在渲染的时候都会实例化出一个watcher对象 然后根据这个组件中data选项中数据的使用情况
+                  进行依赖收集 通过getter
+                  然后当我们修改这些数据的时候会通过数据中的setter 通过notify的方法通知watcher
+                  然后产出新的虚拟dom 通过diff算法 跟旧的虚拟dom进行对比 得到最新的虚拟dom 并且渲染到页面中
